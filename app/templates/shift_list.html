@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shifts</title>
+</head>
+
+<body>
+    <li><a href="{{ url_for('main') }}">Main</a></li>
+    {% for shift in shifts %}
+    <div>
+        <li><a href="{{ url_for('delete_shift',id=shift.id) }}">Delete</a></li>
+        Shift ID: {{ shift.id }}<br>
+        Driver Name: {{ shift.driver.name }}<br>
+        Driver Email: {{ shift.driver.email }}<br>
+        Start Time: {{ shift.start_time }}<br>
+        Approx End Time: {{ shift.approx_end_time }}<br>
+        Route: {{ shift.route.start_point }} to {{ shift.route.end_point }}<br>
+        <strong>Stops:</strong>
+        <ul>
+            {% for stop in shift.route.stops %}
+            <li>{{ stop.location }}</li> <!-- Access the stop location -->
+            {% endfor %}
+        </ul>
+    </div>
+    {% endfor %}
+</body>
+
+</html>

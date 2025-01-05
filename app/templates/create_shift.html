@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login</title>
+</head>
+
+<body>
+    <form method="POST" action="{{url_for('create_shift')}}">
+        {{ form.csrf_token }}
+
+        <div>
+            <label for="driver">{{ form.driver.label }}</label>
+            <select id="driver" name="driver" required>
+                {% for value, label in form.driver.choices %}
+                <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Route Select -->
+        <div>
+            <label for="route">{{ form.route.label }}</label>
+            <select id="route" name="route" required>
+                {% for value, label in form.route.choices %}
+                <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+
+
+        {{ form.start_time.label }} {{ form.start_time(size=30) }}
+        {{ form.end_time.label }} {{ form.end_time(size=30) }}
+        <input type="submit" value="Go">
+    </form>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class=flashes>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+</body>
+
+</html>
