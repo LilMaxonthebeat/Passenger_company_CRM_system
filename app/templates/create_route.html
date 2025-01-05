@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form method="POST" action="{{ url_for('create_route') }}">
+        {{ form.hidden_tag() }}
+        
+        <!-- Start Point -->
+        <div>
+            {{ form.start_point.label }} {{ form.start_point() }}
+        </div>
+        
+        <!-- End Point -->
+        <div>
+            {{ form.end_point.label }} {{ form.end_point() }}
+        </div>
+        
+        <!-- Stops Section -->
+        <div id="stops-container">
+            <label>Stops</label>
+            
+            <!-- Loop through each stop field -->
+            {% for stop in form.stops.entries %}
+                <div class="stop-entry">
+                    {{ stop.location.label }} {{ stop.location() }}
+                    <button type="button" class="remove-stop">Remove Stop</button>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Add Stop Button -->
+        <button type="button" id="add-stop">Add Stop</button>
+        
+        <!-- Submit Button -->
+        <input type="submit" value="Create Route">
+    </form>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const addStopButton = document.getElementById('add-stop');
+            const stopsContainer = document.getElementById('stops-container');
+            
+            // Handle adding a new stop
+            addStopButton.addEventListener('click', function () {
+                const newStopIndex = stopsContainer.children.length;
+                const stopTemplate = `
+                    <div class="stop-entry">
+                        <label for="stops-${newStopIndex}-location">Location</label>
+                        <input id="stops-${newStopIndex}-location" name="stops-${newStopIndex}-location" type="text" required>
+                        <button type="button" class="remove-stop">Remove Stop</button>
+                    </div>
+                `;
+                stopsContainer.insertAdjacentHTML('beforeend', stopTemplate);
+            });
+    
+            // Handle removing a stop
+            stopsContainer.addEventListener('click', function (event) {
+                if (event.target && event.target.classList.contains('remove-stop')) {
+                    event.target.closest('.stop-entry').remove();
+                }
+            });
+        });
+    </script>
+    
+</body>
+</html>
