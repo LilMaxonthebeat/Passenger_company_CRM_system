@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Shift</title>
+</head>
+<body>
+    
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login</title>
+</head>
+
+<body>
+    <form method="POST" action="{{ url_for('edit_shift', id=shift.id) }}">
+        {{ form.csrf_token }}
+        
+        <div>
+            <label for="driver">{{ form.driver.label }}</label>
+            <select id="driver" name="driver" required>
+                {% for value, label in form.driver.choices %}
+                    {% if value == form.driver.data %}
+                        <option value="{{ value }}" selected>{{ label }}</option>
+                    {% else %}
+                        <option value="{{ value }}">{{ label }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+    
+        <div>
+            <label for="route">{{ form.route.label }}</label>
+            <select id="route" name="route" required>
+                {% for value, label in form.route.choices %}
+                    {% if value == form.route.data %}
+                        <option value="{{ value }}" selected>{{ label }}</option>
+                    {% else %}
+                        <option value="{{ value }}">{{ label }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+    
+        <div>
+            <label for="start_time">{{ form.start_time.label }}</label>
+            {{ form.start_time(size=30) }}
+        </div>
+    
+        <div>
+            <label for="end_time">{{ form.end_time.label }}</label>
+            {{ form.end_time(size=30) }}
+        </div>
+    
+        <input type="submit" value="Update Shift">
+    </form>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class=flashes>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+</body>
+
+</html>

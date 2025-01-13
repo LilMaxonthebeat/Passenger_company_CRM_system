@@ -3,10 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 .vscode
-
 # C extensions
 *.so
-
+app/instance/file.db
 # Distribution / packaging
 .Python
 build/
@@ -84,7 +83,7 @@ celerybeat-schedule
 
 # Environments
 .env
-.venv
+#.venv
 env/
 venv/
 ENV/

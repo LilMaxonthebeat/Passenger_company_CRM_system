@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Route</title>
+</head>
+<body>
+    <h2>Edit Route</h2>
+
+    <form method="POST" action="{{ url_for('edit_route', id=route.id) }}">
+        {{ form.csrf_token }}
+        
+        <!-- Route Start and End Points -->
+        <div>
+            <label for="start_point">{{ form.start_point.label }}</label>
+            {{ form.start_point(size=30) }}
+        </div>
+        
+        <div>
+            <label for="end_point">{{ form.end_point.label }}</label>
+            {{ form.end_point(size=30) }}
+        </div>
+    
+        <!-- Editable Stops -->
+        <div>
+            <label for="stops">Stops</label>
+            <ul id="stops-list">
+                {% for stop in route.stops %}
+                    <li>
+                        <input type="text" name="stops[]" value="{{ stop.location }}" required>
+                        <button type="button" onclick="removeStop(this)">Remove</button>
+                    </li>
+                {% endfor %}
+            </ul>
+            <button type="button" onclick="addStop()">Add Stop</button>
+            
+        </div>
+        
+        <!-- Submit button -->
+        <input type="submit" value="Update Route">
+    </form>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class="flashes">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% endwith %}
+
+    <script>
+        function addStop() {
+            const stopsList = document.getElementById('stops-list');
+            const newStopItem = document.createElement('li');
+            
+            newStopItem.innerHTML = `
+                <input type="text" name="stops[]" required>
+                <button type="button" onclick="removeStop(this)">Remove</button>
+            `;
+            
+            stopsList.appendChild(newStopItem);
+        }
+        
+        function removeStop(button) {
+            button.parentElement.remove();
+        }
+    </script>
+</body>
+</html>

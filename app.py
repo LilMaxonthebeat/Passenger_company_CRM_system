@@ -3,6 +3,8 @@ from app import create_app, db
 from app.forms.loginform import LoginForm
 from app.forms.routeform import RouteForm
 from app.forms.shiftform import ShiftForm
+from app.forms.editshiftform import EditShiftForm
+from app.forms.editrouteform import EditRouteForm
 from app.models import User, Routes, Stop, Shift
 from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import check_password_hash
@@ -81,6 +83,53 @@ def delete_route(id):
         db.session.commit()
     return redirect(url_for("routes_list"))
 
+@app.route('/edit_route/<int:id>', methods=['GET', 'POST'])
+def edit_route(id):
+    form = EditRouteForm()
+    route = Routes.query.get(id)
+    form.start_point.data = route.start_point
+    form.end_point.data = route.end_point
+
+    # Pre-populate stops from the route
+    for stop in route.stops:
+        form.stops.append_entry({'location': stop.location})
+
+    print(form.stops)
+    if request.method == 'POST':
+        route.start_point = form.start_point.data
+        route.end_point = form.end_point.data
+
+        # Get stops data from the form
+        stops_data = request.form.getlist('stops[]')
+        print("Submitted Stops Data:", stops_data)
+
+        # Existing stops locations
+        existing_stops = {stop.location: stop for stop in route.stops}  # Map locations to stop objects
+        print("Existing Stops:", existing_stops)
+
+        # Remove stops that are not in the updated list
+        stops_to_remove = []
+        for location, stop in existing_stops.items():
+            if location not in stops_data:  # If the stop is no longer in the updated list, mark for deletion
+                stops_to_remove.append(stop)
+
+        for stop in stops_to_remove:
+            db.session.delete(stop)
+
+        # Add new stops (only those that are not already in the existing stops)
+        for location in stops_data:
+            if location not in existing_stops:  # If it's not an existing stop
+                new_stop = Stop(location=location, route_id=route.id)
+                db.session.add(new_stop)
+
+        # Commit the changes to the database
+        db.session.commit()
+        flash("Route Edited successfully")
+        return redirect(url_for('routes_list'))
+
+    return render_template('edit_route.html', form=form, route=route)
+
+
 
 @app.route("/create_shift", methods=["GET", "POST"])
 def create_shift():
@@ -117,6 +166,30 @@ def delete_shift(id):
     db.session.delete(shift)
     db.session.commit()
     return redirect(url_for("shift_list"))
+
+
+@app.route("/edit_shift/<int:id>", methods=["GET", "POST"])
+def edit_shift(id):
+    form = EditShiftForm()
+    shift = Shift.query.get(id)
+
+    form.driver.data = shift.driver_id
+    form.route.data = shift.route_id
+    form.start_time.data = shift.start_time
+    form.end_time.data = shift.approx_end_time
+
+    if request.method == "POST":
+        # Update the shift with the new form data
+        shift.driver_id = form.driver.data
+        shift.route_id = form.route.data
+        shift.start_time = form.start_time.data
+        shift.approx_end_time = form.end_time.data
+
+        db.session.commit()  # Commit the changes to the database
+        flash("Shift updated successfully", "success")
+        return redirect(url_for("shift_list"))  # Redirect to the shift list page
+
+    return render_template("edit_shift.html", form=form, shift=shift)
 
 
 if __name__ == "__main__":

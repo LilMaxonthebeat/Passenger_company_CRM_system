@@ -1,4 +1,3 @@
-import datetime
 from app import db, login_manager
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -38,6 +37,12 @@ class Stop(db.Model):
     location = db.Column(db.String())
     route_id = db.Column(db.Integer, db.ForeignKey("routes.id"), nullable=False)
 
+class Busses(db.Model):
+    __tablename__="busses"
+    id=db.Column(db.Integer primary_key=True)
+    name=db.Column(db.String())
+    register_number=db.Column(db.String())
+    inspection_valid=db.Column(db.DateTime,nullable=False)
 
 class Shift(db.Model):
     __tablename__ = "shifts"
@@ -53,3 +58,5 @@ class Shift(db.Model):
     # Start time and approximate end time for the shift
     start_time = db.Column(db.DateTime, nullable=False)
     approx_end_time = db.Column(db.DateTime, nullable=True)
+
+
